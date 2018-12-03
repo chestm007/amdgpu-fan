@@ -1,5 +1,3 @@
-import os
-import time
 from distutils.core import setup
 
 from setuptools import find_packages
@@ -7,13 +5,11 @@ from setuptools import find_packages
 with open('README.md') as f:
     readme = f.read()
 
-VERSION = os.environ.get('TRAVIS_TAG') or '0.0.0-{}'.format(time.time())
-
 setup(
     name='amdgpu_fan',
-    version=VERSION,
+    version='PROJECTVERSION',
     packages=find_packages(),
-    url='https://github.com/chestm007/amdgpu_fan',
+    url='https://github.com/chestm007/amdgpu-fan',
     license='GPL-2.0',
     author='Max Chesterfield',
     author_email='chestm007@hotmail.com',

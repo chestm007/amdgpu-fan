@@ -1,7 +1,6 @@
 import os
 import re
 import sys
-import time
 
 ROOT_DIR = '/sys/class/drm'
 HWMON_DIR = 'device/hwmon'
