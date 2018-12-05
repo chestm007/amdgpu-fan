@@ -1,11 +1,18 @@
-# fan controller for amdgpus
+# Fan controller for amdgpus
 
-if you experience problems please create an issue.
+If you experience problems please create an issue.
 
-usage:  
+## installation:
+### pip
+`sudo pip3 install .`
+
+### Arch linux
+Available in the aur as `amdgpu-fan`
+
+## usage:  
 `sudo amdgpu-fan`  
 
-configuration:
+## configuration:
 ```
 # /etc/amdgpu-fan.yml
 # format is:
