@@ -41,6 +41,17 @@ def load_config(path):
 
 
 def main():
+
+    default_fan_config='''#Fan Control Matrix. [<Temp in C>,<Fanspeed in %>]
+speed_matrix:
+- [0, 0]
+- [30, 25]
+- [45, 50]
+- [60, 66]
+- [65, 69]
+- [70, 75]
+- [80, 100]
+'''
     config = None
     for location in CONFIG_LOCATIONS:
         if os.path.isfile(location):
@@ -49,8 +60,8 @@ def main():
 
     if config is None:
         logger.info(f'no config found, creating one in {CONFIG_LOCATIONS[-1]}')
-        with open(CONFIG_LOCATIONS[-1], 'w+') as f:
-            f.write(yaml.dump(dict(speed_matrix=[[0, 0], [100, 100]])))
+        with open(CONFIG_LOCATIONS[-1], 'w') as f:
+            f.write(default_fan_config)
             f.flush()
 
     config = load_config(CONFIG_LOCATIONS[-1])
