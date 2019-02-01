@@ -45,11 +45,12 @@ def main():
     default_fan_config='''#Fan Control Matrix. [<Temp in C>,<Fanspeed in %>]
 speed_matrix:
 - [0, 0]
-- [30, 25]
+- [30, 33]
 - [45, 50]
 - [60, 66]
 - [65, 69]
 - [70, 75]
+- [75, 89]
 - [80, 100]
 '''
     config = None
