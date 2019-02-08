@@ -73,7 +73,15 @@ class Scanner:
         only directories in ROOT_DIR that are card1, card0, card3 etc.
         :return: a list of initialized Card objects
         """
-        return {node: Card(node) for node in os.listdir(ROOT_DIR) if re.match(self.CARD_REGEX, node)}
+        cards = {}
+        for node in os.listdir(ROOT_DIR):
+            if re.match(self.CARD_REGEX, node):
+                try:
+                    cards[node] = Card(node)
+                except FileNotFoundError:
+                    # if card lacks hwmon its likely not amdgpu, and definitely not compatible with this software
+                    continue
+        return cards
 
 
 if __name__ == '__main__':
