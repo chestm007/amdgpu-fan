@@ -5,6 +5,7 @@ from setuptools import find_packages
 with open('README.md') as f:
     readme = f.read()
 
+
 setup(
     name='amdgpu_fan',
     version='PROJECTVERSION',
@@ -18,6 +19,10 @@ setup(
     description='amdgpu fan controller',
     long_description=readme,
     install_requires=[
+        'pyyaml',
+        'matplotlib',
+        'numpy',
+        'scipy'
     ],
     entry_points="""
         [console_scripts]

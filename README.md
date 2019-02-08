@@ -19,6 +19,7 @@ Available in the aur as `amdgpu-fan`
 # -[temp(*C), speed(0-100%)]
 # eg:
 
+speed_matrix:
 - [0, 0]
 - [40, 30]
 - [60, 50]
