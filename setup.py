@@ -20,9 +20,7 @@ setup(
     long_description=readme,
     install_requires=[
         'pyyaml',
-        'matplotlib',
         'numpy',
-        'scipy'
     ],
     entry_points="""
         [console_scripts]
