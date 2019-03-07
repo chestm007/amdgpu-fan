@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+from amdgpu_fan import LOGGER as logger
 
 ROOT_DIR = '/sys/class/drm'
 HWMON_DIR = 'device/hwmon'
@@ -17,6 +18,12 @@ class Card:
                 self._monitor = node
         self._endpoints = self._load_endpoints()
 
+    def _verify_card(self):
+        for endpoint in ('temp1_input', 'pwm1_max', 'pwm1_min', 'pwm1_enable', 'pwm1'):
+            if endpoint not in self._endpoints:
+                logger.info('skipping card: %s as its missing endpoint %s', self._identifier, endpoint)
+                raise FileNotFoundError
+
     def _load_endpoints(self):
         _endpoints = {}
         _dir =os.path.join(ROOT_DIR, self._identifier, HWMON_DIR, self._monitor)
@@ -26,16 +33,26 @@ class Card:
         return _endpoints
 
     def read_endpoint(self, endpoint):
-        with open(self._endpoints[endpoint], 'r') as e:
-            return e.read()
+        if endpoint in self._endpoints.keys():
+            with open(self._endpoints[endpoint], 'r') as e:
+                return e.read()
+        else:
+            return None
 
     def write_endpoint(self, endpoint, data):
-        with open(self._endpoints[endpoint], 'w') as e:
-            return e.write(str(data))
+        try:
+            with open(self._endpoints[endpoint], 'w') as e:
+                return e.write(str(data))
+        except PermissionError:
+            logger.error('Failed writing to devfs file, are you sure your running as root?')
+            sys.exit(1)
 
     @property
     def fan_speed(self):
-        return int(self.read_endpoint('fan1_input'))
+        try:
+            return int(self.read_endpoint('fan1_input'))
+        except KeyError:  # better to return no speed then explode
+            return 0
 
     @property
     def gpu_temp(self):
@@ -79,7 +96,8 @@ class Scanner:
                 try:
                     cards[node] = Card(node)
                 except FileNotFoundError:
-                    # if card lacks hwmon its likely not amdgpu, and definitely not compatible with this software
+                    # if card lacks hwmon or the required devfs files, its likely not
+                    # amdgpu, and definitely not compatible with this software
                     continue
         return cards
 
