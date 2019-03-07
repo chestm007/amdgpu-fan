@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 
 import yaml
@@ -15,7 +16,10 @@ CONFIG_LOCATIONS = [
 
 class FanController:
     def __init__(self, config):
-        self._scanner = Scanner()
+        self._scanner = Scanner(config.get('cards'))
+        if len(self._scanner.cards) < 1:
+            logger.error('no compatible cards found, exiting')
+            sys.exit(1)
         self.curve = Curve(config.get('speed_matrix'))
         self._frequency = 1
 
@@ -42,7 +46,7 @@ def load_config(path):
 
 def main():
 
-    default_fan_config='''#Fan Control Matrix. [<Temp in C>,<Fanspeed in %>]
+    default_fan_config = '''#Fan Control Matrix. [<Temp in C>,<Fanspeed in %>]
 speed_matrix:
 - [0, 0]
 - [30, 33]
@@ -52,6 +56,10 @@ speed_matrix:
 - [70, 75]
 - [75, 89]
 - [80, 100]
+
+# optional
+# cards:  # can be any card returned from `ls /sys/class/drm | grep "^card[[:digit:]]$"`
+# - card0
 '''
     config = None
     for location in CONFIG_LOCATIONS:
@@ -65,7 +73,7 @@ speed_matrix:
             f.write(default_fan_config)
             f.flush()
 
-    config = load_config(CONFIG_LOCATIONS[-1])
+        config = load_config(CONFIG_LOCATIONS[-1])
 
     FanController(config).main()
 

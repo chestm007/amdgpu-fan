@@ -82,10 +82,10 @@ class Card:
 class Scanner:
     CARD_REGEX = '^card\d$'
 
-    def __init__(self):
-        self.cards = self._get_cards()
+    def __init__(self, cards=None):
+        self.cards = self._get_cards(cards)
 
-    def _get_cards(self):
+    def _get_cards(self, cards_to_scan):
         """
         only directories in ROOT_DIR that are card1, card0, card3 etc.
         :return: a list of initialized Card objects
@@ -93,6 +93,8 @@ class Scanner:
         cards = {}
         for node in os.listdir(ROOT_DIR):
             if re.match(self.CARD_REGEX, node):
+                if cards_to_scan and node.lower() not in [c.lower() for c in cards_to_scan]:
+                    continue
                 try:
                     cards[node] = Card(node)
                 except FileNotFoundError:

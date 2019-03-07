@@ -15,15 +15,17 @@ Available in the aur as `amdgpu-fan`
 ## configuration:
 ```
 # /etc/amdgpu-fan.yml
-# format is:
-# -[temp(*C), speed(0-100%)]
 # eg:
 
-speed_matrix:
+speed_matrix:  # -[temp(*C), speed(0-100%)]
 - [0, 0]
 - [40, 30]
 - [60, 50]
 - [80, 100]
+
+# optional
+# cards:  # can be any card returned from `ls /sys/class/drm | grep "^card[[:digit:]]$"`
+# - card0
 ```
 
 
