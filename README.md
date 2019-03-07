@@ -25,7 +25,7 @@ speed_matrix:  # -[temp(*C), speed(0-100%)]
 
 # optional
 # cards:  # can be any card returned from 
-# ls /sys/class/drm | grep "^card[[:digit:]]$"
+#         # ls /sys/class/drm | grep "^card[[:digit:]]$"
 # - card0
 ```
 
