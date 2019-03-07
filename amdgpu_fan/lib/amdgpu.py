@@ -33,11 +33,8 @@ class Card:
         return _endpoints
 
     def read_endpoint(self, endpoint):
-        if endpoint in self._endpoints.keys():
-            with open(self._endpoints[endpoint], 'r') as e:
-                return e.read()
-        else:
-            return None
+        with open(self._endpoints[endpoint], 'r') as e:
+            return e.read()
 
     def write_endpoint(self, endpoint, data):
         try:
