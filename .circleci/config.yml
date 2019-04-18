@@ -44,6 +44,12 @@ jobs:
       - image: circleci/python:3.7.3-stretch
     working_directory: ~/repo
     <<: *default_steps
+  deploy:
+    docker:
+      - image: circleci/python:3.7.3-stretch
+    working_directory: ~/repo
+    <<: *upload_to_pypi
+
 
 workflows:
   version: 2
@@ -51,3 +57,8 @@ workflows:
     jobs:
       - python3.6
       - python3.7
+      - deploy:
+          requires:
+            - python3.6
+            - python3.7
+
