@@ -10,12 +10,6 @@ default_steps: &default_steps
           sudo chmod -R a+rwx /usr/share
           . venv/bin/activate
           pip install .
-    - run:
-        name: run tests
-        command: |
-          . venv/bin/activate
-          pip install pytest mock pep8
-          python -m pytest
 
 upload_to_pypi: &upload_to_pypi
   steps:
