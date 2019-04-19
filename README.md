@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/chestm007/amdgpu-fan.svg?style=svg)](https://circleci.com/gh/chestm007/amdgpu-fan)  
+
 # Fan controller for amdgpus
 
 If you experience problems please create an issue.
