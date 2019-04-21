@@ -1,36 +1,74 @@
-default_steps: &default_steps
+install_deps: &install_deps
+  name: install dependencies
+  command: |
+    sudo apt-get update
+    sudo apt-get install -y virtualenv
+
+create_venv: &create_venv
+  name: create virtualenv
+  command: |
+    python -m venv venv
+
+chmod_usr_share: &chmod_usr_share
+  name: chmod usr share to be world read/write/exec
+  command: |
+    sudo chmod a+rwx /usr/share
+
+install_project: &install_project
+  name: install project in venv
+  command: |
+    . venv/bin/activate
+    pip install .
+
+test_project: &test_project
+  name: run tests
+  command: |
+    . venv/bin/activate
+    pip install pytest
+    cd tests
+    python3 -m pytest
+
+init_pypirc: &init_pypirc
+  name: init .pypirc
+  command: |
+    echo -e "[pypi]" >> ~/.pypirc
+    echo -e "username = chestm007" >> ~/.pypirc
+    echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+
+package_and_upload: &package_and_upload
+  name: package and upload
+  command: |
+    . venv/bin/activate
+    pip install twine
+    sed -i "s/PROJECTVERSION/`python get_build_version.py`/g" setup.py
+    python setup.py sdist
+    twine upload dist/*
+
+test_steps: &test_steps
   steps:
     - checkout
     - run:
-        name: install dependencies
-        command: |
-          sudo apt-get update
-          sudo apt-get install -y virtualenv
-          python -m venv venv
-          sudo chmod -R a+rwx /usr/share
-          . venv/bin/activate
-          pip install .
+        <<: *install_deps
+    - run:
+        <<: *create_venv
+    - run:
+        <<: *chmod_usr_share
+    - run:
+        <<: *install_project
+    - run:
+        <<: *test_project
 
 upload_to_pypi: &upload_to_pypi
   steps:
     - checkout
     - run:
-        name: init .pypirc
-        command: |
-          echo -e "[pypi]" >> ~/.pypirc
-          echo -e "username = chestm007" >> ~/.pypirc
-          echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-
+        <<: *init_pypirc
     - run:
-        name: package and upload
-        command: |
-          sudo apt-get install -y virtualenv
-          python -m venv venv
-          . venv/bin/activate
-          pip install twine
-          sed -i "s/PROJECTVERSION/`python get_build_version.py`/g" setup.py
-          python setup.py sdist
-          twine upload dist/*
+        <<: *install_deps
+    - run:
+        <<: *create_venv
+    - run:
+        <<: *package_and_upload
 
 version: 2
 jobs:
@@ -38,12 +76,12 @@ jobs:
     docker:
       - image: circleci/python:3.6.8-stretch
     working_directory: ~/repo
-    <<: *default_steps
+    <<: *test_steps
   python3.7:
     docker:
       - image: circleci/python:3.7.3-stretch
     working_directory: ~/repo
-    <<: *default_steps
+    <<: *test_steps
   deploy:
     docker:
       - image: circleci/python:3.7.3-stretch

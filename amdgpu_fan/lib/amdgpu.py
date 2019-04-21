@@ -67,11 +67,12 @@ class Card:
         self.write_endpoint('pwm1_enable', 0 if state else 1)
 
     def set_fan_speed(self, speed):
-        if speed > self.fan_max:
+        if speed >= 100:
             speed = self.fan_max
-        elif speed < self.fan_min:
+        elif speed <= 0:
             speed = self.fan_min
-        speed = self.fan_max / 100 * speed
+        else:
+            speed = self.fan_max / 100 * speed
         self.set_system_controlled_fan(False)
         return self.write_endpoint('pwm1', int(speed))
 
