@@ -1,12 +1,12 @@
 [![CircleCI](https://circleci.com/gh/chestm007/amdgpu-fan.svg?style=svg)](https://circleci.com/gh/chestm007/amdgpu-fan)  
 
-# Fan controller for amdgpus
+# Fan controller for amdgpus [python3 only]
 
 If you experience problems please create an issue.
 
 ## installation:
 ### pip
-`sudo pip3 install .`
+`sudo pip3 install amdgpu-fan`
 
 ### Arch linux
 Available in the aur as `amdgpu-fan`
