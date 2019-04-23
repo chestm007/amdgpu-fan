@@ -90,7 +90,7 @@ jobs:
 
 
 workflows:
-  version: 2
+  version: 2.1
   test-all:
     jobs:
       - python3-6:
