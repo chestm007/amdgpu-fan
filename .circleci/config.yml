@@ -70,14 +70,14 @@ upload_to_pypi: &upload_to_pypi
     - run:
         <<: *package_and_upload
 
-version: 2
+version: 2.1
 jobs:
-  python3.6:
+  python3-6:
     docker:
       - image: circleci/python:3.6.8-stretch
     working_directory: ~/repo
     <<: *test_steps
-  python3.7:
+  python3-7:
     docker:
       - image: circleci/python:3.7.3-stretch
     working_directory: ~/repo
@@ -93,13 +93,13 @@ workflows:
   version: 2
   test-all:
     jobs:
-      - python3.6:
+      - python3-6:
           filters:
             tags:
               ignore: /.*/
             branches:
               only: /.*/
-      - python3.7:
+      - python3-7:
           filters:
             tags:
               ignore: /.*/
