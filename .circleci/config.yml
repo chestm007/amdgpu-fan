@@ -107,8 +107,8 @@ workflows:
               only: /.*/
       - deploy:
           requires:
-            - python3.6
-            - python3.7
+            - python3-6
+            - python3-7
           filters:
             tags:
               only: /.*/
