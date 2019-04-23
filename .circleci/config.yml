@@ -91,12 +91,26 @@ jobs:
 
 workflows:
   version: 2
-  build_and_test:
+  test-all:
     jobs:
-      - python3.6
-      - python3.7
+      - python3.6:
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: /.*/
+      - python3.7:
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: /.*/
       - deploy:
           requires:
             - python3.6
             - python3.7
-
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
