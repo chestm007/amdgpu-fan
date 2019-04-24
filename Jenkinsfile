@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                exit 1
+                sh 'exit 1'
             }
         }
     }
