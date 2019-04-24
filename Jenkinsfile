@@ -1,16 +1,18 @@
 pipeline {
     agent any
     stages {
-        stage('Build'){
+        stage('Build') {
             steps {
                 sh 'mkdir foo'
                 sh 'ls'
             }
-        } stage('Test') {
+        }
+        stage('Test') {
             steps {
                 sh 'ls'
             }
-        } stage('Deploy') {
+        }
+        stage('Deploy') {
             steps {
                 exit 1
             }
