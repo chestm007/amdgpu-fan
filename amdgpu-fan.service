@@ -6,4 +6,4 @@ ExecStart=/usr/bin/amdgpu-fan
 Restart=always
 
 [Install]
-WantedBy=default.target
+WantedBy=sysinit.target
