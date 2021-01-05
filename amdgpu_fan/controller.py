@@ -23,17 +23,18 @@ class FanController:
         self.temp_drop  = config.get('temp_drop', 5)
         self.curve = Curve(speed_matrix)
         self._frequency = 1
+        self._interval = 1/self._frequency
 
     def main(self):
         logger.info(f'starting amdgpu-fan')
         speed_by_card = {}
         while True:
             for name, card in self._scanner.cards.items():
-                current_speed = speed_by_card.get(name, 0)
+                current_speed = speed_by_card.get(name)
                 temp = card.gpu_temp
 
                 speed = max(0, int(self.curve.get_speed(int(temp))))
-                if current_speed >= speed:
+                if current_speed is not None and current_speed >= speed:
                     speed = max(0, int(self.curve.get_speed(int(temp) + self.temp_drop)))
                     if current_speed <= speed:
                         continue
@@ -42,7 +43,8 @@ class FanController:
 
                 card.set_fan_speed(speed)
                 speed_by_card[name] = speed
-            time.sleep(self._frequency)
+
+            time.sleep(self._interval)
 
 
 def load_config(path):
