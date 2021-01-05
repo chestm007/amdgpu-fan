@@ -31,6 +31,10 @@ class FanController:
         while True:
             for name, card in self._scanner.cards.items():
                 current_speed = speed_by_card.get(name)
+                # Reset current speed if it is off for more than 10%
+                if current_speed is not None and abs(current_speed - card.fan_speed) > 10:
+                    current_speed = None
+
                 temp = card.gpu_temp
 
                 speed = max(0, int(self.curve.get_speed(int(temp))))
