@@ -37,6 +37,8 @@ class Card:
             return e.read()
 
     def write_endpoint(self, endpoint, data):
+        if data >= 3:
+            data = 4
         try:
             with open(self._endpoints[endpoint], 'w') as e:
                 return e.write(str(data))
