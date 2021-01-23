@@ -18,6 +18,8 @@ class Curve:
             raise ValueError(f'Fan curve points should be strictly monotonically increasing, configuration error ?')
         if np.any(np.diff(self.speeds) < 0):
             raise ValueError(f'Curve fan speeds should be monotonically increasing, configuration error ?')
+        if np.any(np.diff(self.speeds) < 0):
+            raise ValueError(f'Current driver bugs require the lowest speed value be 4')
 
     def get_speed(self, temp):
         """
