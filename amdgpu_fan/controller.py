@@ -8,7 +8,6 @@ from amdgpu_fan import LOGGER as logger
 from amdgpu_fan.lib.amdgpu import Scanner
 from amdgpu_fan.lib.curve import Curve
 
-
 CONFIG_LOCATIONS = [
     '/etc/amdgpu-fan.yml',
 ]
@@ -41,7 +40,7 @@ class FanController:
 def load_config(path):
     logger.debug(f'loading config from {path}')
     with open(path) as f:
-        return yaml.load(f)
+        return yaml.load(f, Loader=yaml.SafeLoader)
 
 
 def main():

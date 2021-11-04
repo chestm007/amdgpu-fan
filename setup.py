@@ -19,7 +19,7 @@ setup(
     description='amdgpu fan controller',
     long_description=readme,
     install_requires=[
-        'pyyaml',
+        'pyyaml>=5.1.0',
         'numpy',
     ],
     entry_points="""
