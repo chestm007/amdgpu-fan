@@ -69,9 +69,14 @@ speed_matrix:
 
     if config is None:
         logger.info(f'no config found, creating one in {CONFIG_LOCATIONS[-1]}')
-        with open(CONFIG_LOCATIONS[-1], 'w') as f:
-            f.write(default_fan_config)
-            f.flush()
+        try:
+            with open(CONFIG_LOCATIONS[-1], 'w') as f:
+                f.write(default_fan_config)
+                f.flush()
+        except:
+            print(f"Failed writing to {CONFIG_LOCATIONS[-1]}, are you sure you'r running as root?")
+            logger.error('no root privileges, exiting')
+            sys.exit(1)
 
         config = load_config(CONFIG_LOCATIONS[-1])
 
@@ -80,3 +85,4 @@ speed_matrix:
 
 if __name__ == '__main__':
     main()
+
