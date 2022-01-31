@@ -75,8 +75,63 @@ speed_matrix:
 
         config = load_config(CONFIG_LOCATIONS[-1])
 
-    FanController(config).main()
+    CMD_HELP = """usage: amdgpu-fan [COMMAND] [ARGS] [CARD]
+        
+CARD should be what shows up in /sys/class/drm. If there's only one card (ex: card0), it will be automatically detected.
+    
+commands:
+    --start         start fan control
+    --get           get information about the card
+    --set-speed     set gpu fan speed
+            
+args:
+    with --get:
+        fan_speed   get the current speed of the fan
+        gpu_temp    get the current temp of the gpu
+            
+    with --set-speed:
+        input the speed you'd like from 0-100 or auto
+        100 = max, 0 = off, 'auto' = system controlled
+"""
 
+    args = sys.argv[1:]
+    if '--help' in args or '-h' in args or len(args) == 0\
+            or args[0] not in ('--start', '--get', '--set-speed')\
+            or (args[0] == '--get' and (args[1] not in ('fan_speed', 'gpu_temp'))):
+        print(CMD_HELP)
+        sys.exit(1)
+
+    scanner = Scanner()
+
+    command = args[0]
+    if len(args) > 1:
+        arg = args[1]
+    if len(args) < 3:
+        cards = Scanner(config.get('cards')).cards
+        if len(cards) > 1:
+            print("There are two or more cards. Please specify the card you wish to examine.")
+            print(list(card.keys()))
+            sys.exit(1)
+        else:
+            card = list(cards.keys())[0]
+    else:
+        card = args[2]
+
+    if command == '--get':
+        if arg == 'fan_speed':
+            print(f"{scanner.cards.get(card).fan_speed} rpm")
+        elif arg == 'gpu_temp':
+            print(f"{scanner.cards.get(card).gpu_temp} °C")
+
+    elif command == '--set-speed':
+        if arg == 'auto':
+            scanner.cards.get(card).set_system_controlled_fan(True)
+        else:
+            print(scanner.cards.get(card).set_fan_speed(arg))
+    elif command == '--start':
+        FanController(config).main()
+
+    sys.exit(1)
 
 if __name__ == '__main__':
     main()
