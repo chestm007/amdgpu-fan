@@ -8,7 +8,6 @@ from amdgpu_fan import LOGGER as logger
 from amdgpu_fan.lib.amdgpu import Scanner
 from amdgpu_fan.lib.curve import Curve
 
-
 CONFIG_LOCATIONS = [
     '/etc/amdgpu-fan.yml',
 ]
