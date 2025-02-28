@@ -8,7 +8,7 @@ HWMON_DIR = 'device/hwmon'
 
 
 class Card:
-    HWMON_REGEX = '^hwmon\d$'
+    HWMON_REGEX = r'^hwmon\d$'
 
     def __init__(self, card_identifier):
         self._identifier = card_identifier
@@ -78,7 +78,7 @@ class Card:
 
 
 class Scanner:
-    CARD_REGEX = '^card\d$'
+    CARD_REGEX = r'^card\d$'
 
     def __init__(self, cards=None):
         self.cards = self._get_cards(cards)
