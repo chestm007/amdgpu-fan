@@ -9,24 +9,18 @@ If you experience problems please create an issue.
 ### Arch linux
 Available in the aur as `amdgpu-fan`
 
-## usage:  
-`sudo amdgpu-fan`  
+## usage:
+`sudo amdgpu-fan`
 
 ## configuration:
 
 .. code-block::
 
-    # /etc/amdgpu-fan.yml
-    # eg:
+# optional
+# cards:  # can be any card returned from
+#         # ls /sys/class/drm | grep "^card[[:digit:]]$"
+# - card0
 
-    speed_matrix:  # -[temp(*C), speed(0-100%)]
-    - [0, 0]
-    - [40, 30]
-    - [60, 50]
-    - [80, 100]
-
-    # optional
-    # cards:  # can be any card returned from 
-    #         # ls /sys/class/drm | grep "^card[[:digit:]]$"
-    # - card0
-
+# optional
+# temp_drop: 5  # how much temperature should drop before fan speed is decreased
+```
