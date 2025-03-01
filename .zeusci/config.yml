@@ -1,0 +1,75 @@
+setup: &setup
+  name: chmod usr share to be world read/write/exec
+  command: |
+    python -m venv venv
+    . venv/bin/activate
+    pip install --upgrade pip
+    pip install .
+
+test_project: &test_project
+  name: run tests
+  command: |
+    . venv/bin/activate
+    pip install pytest
+    cd tests
+    python3 -m pytest
+
+package_and_upload: &package_and_upload
+  name: package and upload
+  command: |
+    . venv/bin/activate
+    pip install setuptools
+    pip install twine
+    sed -i "s/PROJECTVERSION/`python get_build_version.py`/g" setup.py
+    python setup.py sdist
+    twine upload dist/* -u __token__
+    
+
+test_steps: &test_steps
+  steps:
+    - checkout
+    - run:
+        <<: *setup
+    - run:
+        <<: *test_project
+
+upload_to_pypi: &upload_to_pypi
+  steps:
+    - checkout
+    - run:
+        <<: *setup
+    - run:
+        <<: *package_and_upload
+
+version: 2
+jobs:
+  python3.13:
+    docker:
+      - image: cimg/python:3.13.2
+    working_directory: ~/repo
+    <<: *test_steps
+  deploy:
+    docker:
+      - image: cimg/python:3.13.2
+    working_directory: ~/repo
+    <<: *upload_to_pypi
+
+
+workflows:
+  version: 2
+  test-all:
+    stages:
+      - python3.13:
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: /.*/
+      - deploy:
+          requires:
+            - python3.13
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
