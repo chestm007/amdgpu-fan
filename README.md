@@ -16,11 +16,10 @@ Available in the aur as `amdgpu-fan`
 
 .. code-block::
 
-# optional
-# cards:  # can be any card returned from
-#         # ls /sys/class/drm | grep "^card[[:digit:]]$"
-# - card0
+    # optional
+    # cards:  # can be any card returned from
+    #         # ls /sys/class/drm | grep "^card[[:digit:]]$"
+    # - card0
 
-# optional
-# temp_drop: 5  # how much temperature should drop before fan speed is decreased
-```
+    # optional
+    # temp_drop: 5  # how much temperature should drop before fan speed is decreased
