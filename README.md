@@ -1,20 +1,30 @@
-# Fan controller for amdgpus [python3 only]
+# Fan controller for amdgpus
 
 If you experience problems please create an issue.
 
-## installation:
-### pip
-`sudo pip3 install amdgpu-fan`
+## Installation:
 
-### Arch linux
-Available in the aur as `amdgpu-fan`
-
-## usage:
-`sudo amdgpu-fan`
-
-## configuration:
+### Arch Linux, Manjaro and derivatives
 
 .. code-block::
+
+    $ git clone https://github.com/zzkW35/amdgpu-fan.git
+    $ cd amdgpu-fan
+    $ makepkg -si
+
+## Usage:
+`$ sudo amdgpu-fan`  
+Start the daemon with `$ sudo systemctl start amdgpu-fan`  
+Make it with run at startup with `$ sudo systemctl enable amdgpu-fan`
+
+
+## Configuration:
+Edit `/etc/amdgpu-fan.yml` to create the desired fan curve
+
+.. code-block::
+
+    # /etc/amdgpu-fan.yml
+    # eg:
 
     # optional
     # cards:  # can be any card returned from
