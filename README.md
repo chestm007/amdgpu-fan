@@ -2,13 +2,16 @@
 
 If you experience problems please create an issue.
 
+<a href="https://aur.archlinux.org/packages/amdgpu-fan/"><img src="https://raw.githubusercontent.com/CorvetteCole/amdgpu-fan/master/download_aur.png" height="54"></a>
+
 ## Installation:
 
 ### Arch Linux, Manjaro and derivatives
+Install from the [AUR](https://aur.archlinux.org/packages/amdgpu-fan/) using your favorite helper, or build manually as shown below:
 
 .. code-block::
 
-    $ git clone https://github.com/zzkW35/amdgpu-fan.git
+    $ git clone https://github.com/chestm007/amdgpu-fan.git
     $ cd amdgpu-fan
     $ makepkg -si
 
