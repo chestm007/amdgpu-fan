@@ -68,8 +68,7 @@ workflows:
       - deploy:
           requires:
             - python3.13
-          filters:
-            tags:
-              only: /.*/
-            branches:
-              ignore: /.*/
+          run_when:
+            branch: 'master'
+            tag: '^\d+\.\d+\.\d+$'
+
