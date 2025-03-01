@@ -1,32 +1,38 @@
-# Fan controller for amdgpus [python3 only]
+# Fan controller for amdgpus
 
 If you experience problems please create an issue.
 
-## installation:
-### pip
-`sudo pip3 install amdgpu-fan`
+<a href="https://aur.archlinux.org/packages/amdgpu-fan/"><img src="https://raw.githubusercontent.com/CorvetteCole/amdgpu-fan/master/download_aur.png" height="54"></a>
 
-### Arch linux
-Available in the aur as `amdgpu-fan`
+## Installation:
 
-## usage:  
-`sudo amdgpu-fan`  
+### Arch Linux, Manjaro and derivatives
+Install from the [AUR](https://aur.archlinux.org/packages/amdgpu-fan/) using your favorite helper, or build manually as shown below:
 
-## configuration:
+.. code-block::
+
+    $ git clone https://github.com/chestm007/amdgpu-fan.git
+    $ cd amdgpu-fan
+    $ makepkg -si
+
+## Usage:
+`$ sudo amdgpu-fan`  
+Start the daemon with `$ sudo systemctl start amdgpu-fan`  
+Make it with run at startup with `$ sudo systemctl enable amdgpu-fan`
+
+
+## Configuration:
+Edit `/etc/amdgpu-fan.yml` to create the desired fan curve
 
 .. code-block::
 
     # /etc/amdgpu-fan.yml
     # eg:
 
-    speed_matrix:  # -[temp(*C), speed(0-100%)]
-    - [0, 0]
-    - [40, 30]
-    - [60, 50]
-    - [80, 100]
-
     # optional
-    # cards:  # can be any card returned from 
+    # cards:  # can be any card returned from
     #         # ls /sys/class/drm | grep "^card[[:digit:]]$"
     # - card0
 
+    # optional
+    # temp_drop: 5  # how much temperature should drop before fan speed is decreased

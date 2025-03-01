@@ -47,7 +47,7 @@ class Card:
     @property
     def fan_speed(self):
         try:
-            return int(self.read_endpoint('fan1_input'))
+            return int(int(self.read_endpoint('pwm1')) * 100 / self.fan_max)
         except KeyError:  # better to return no speed then explode
             return 0
 
@@ -72,7 +72,7 @@ class Card:
         elif speed <= 0:
             speed = self.fan_min
         else:
-            speed = self.fan_max / 100 * speed
+            speed = self.fan_max * speed / 100
         self.set_system_controlled_fan(False)
         return self.write_endpoint('pwm1', int(speed))
 
@@ -111,12 +111,12 @@ if __name__ == '__main__':
         commands:
             --get           get information about the card
             --set-speed     set gpu fan speed
-            
+
         args:
             with --get:
                 fan_speed   get the current speed of the fan
                 gpu_temp    get the current temp of the gpu
-                
+
             with --set-speed:
                 input the speed you'd like from 0-100 or auto
                 100 = max, 0 = off, 'auto' = system controlled

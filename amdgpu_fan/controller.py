@@ -19,22 +19,36 @@ class FanController:
         if len(self._scanner.cards) < 1:
             logger.error('no compatible cards found, exiting')
             sys.exit(1)
-        self.curve = Curve(config.get('speed_matrix'))
+        speed_matrix = config.get('speed_matrix')
+        self.temp_drop  = config.get('temp_drop', 5)
+        self.curve = Curve(speed_matrix)
         self._frequency = 1
+        self._interval = 1/self._frequency
 
     def main(self):
         logger.info(f'starting amdgpu-fan')
+        speed_by_card = {}
         while True:
             for name, card in self._scanner.cards.items():
-                temp = card.gpu_temp
-                speed = int(self.curve.get_speed(int(temp)))
-                if speed < 0:
-                    speed = 0
+                current_speed = speed_by_card.get(name)
+                # Reset current speed if it is off for more than 10%
+                if current_speed is not None and abs(current_speed - card.fan_speed) > 10:
+                    current_speed = None
 
-                logger.debug(f'{name}: Temp {temp}, Setting fan speed to: {speed}, fan speed{card.fan_speed}, min:{card.fan_min}, max:{card.fan_max}')
+                temp = card.gpu_temp
+
+                speed = max(0, int(self.curve.get_speed(int(temp))))
+                if current_speed is not None and current_speed >= speed:
+                    speed = max(0, int(self.curve.get_speed(int(temp) + self.temp_drop)))
+                    if current_speed <= speed:
+                        continue
+
+                logger.debug(f'{name}: Temp {temp}, Setting fan speed to: {speed}, fan speed: {card.fan_speed}, min: {card.fan_min}, max: {card.fan_max}')
 
                 card.set_fan_speed(speed)
-            time.sleep(self._frequency)
+                speed_by_card[name] = speed
+
+            time.sleep(self._interval)
 
 
 def load_config(path):
@@ -59,6 +73,9 @@ speed_matrix:
 # optional
 # cards:  # can be any card returned from `ls /sys/class/drm | grep "^card[[:digit:]]$"`
 # - card0
+
+# optional
+# temp_drop: 5  # how much temperature should drop before fan speed is decreased
 '''
     config = None
     for location in CONFIG_LOCATIONS:
