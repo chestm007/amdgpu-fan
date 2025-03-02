@@ -18,10 +18,15 @@ class Card:
                 self._monitor = node
         self._endpoints = self._load_endpoints()
 
-    def _verify_card(self):
+    def verify_card(self):
         for endpoint in ('temp1_input', 'pwm1_max', 'pwm1_min', 'pwm1_enable', 'pwm1'):
             if endpoint not in self._endpoints:
-                logger.info('skipping card: %s as its missing endpoint %s', self._identifier, endpoint)
+
+                if endpoint == 'pwm1_min':
+                    logger.info(f'skipping card: {self._identifier} as its missing endpoint {endpoint} and is likely'
+                                f' onboard')
+                else:
+                    logger.info(f'skipping card: {self._identifier} as its missing endpoint {endpoint}')
                 raise FileNotFoundError
 
     def _load_endpoints(self):
@@ -94,7 +99,9 @@ class Scanner:
                 if cards_to_scan and node.lower() not in [c.lower() for c in cards_to_scan]:
                     continue
                 try:
-                    cards[node] = Card(node)
+                    _card = Card(node)
+                    if _card.verify_card():
+                        cards[node] = _card
                 except FileNotFoundError:
                     # if card lacks hwmon or the required devfs files, its likely not
                     # amdgpu, and definitely not compatible with this software
