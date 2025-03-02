@@ -8,7 +8,7 @@ with open('README.md') as f:
 
 setup(
     name='amdgpu_fan',
-    version='0.0.23',
+    version='0.0.24',
     packages=find_packages(),
     url='https://github.com/chestm007/amdgpu-fan',
     license='GPL-2.0',
