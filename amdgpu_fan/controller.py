@@ -28,8 +28,15 @@ class FanController:
         self._interval = 1/self._frequency
 
     def main(self):
-        logger.info(f'starting amdgpu-fan')
+        logger.info(f'Starting amdgpu-fan.')
+        try:
+            self._main_loop()
+        except KeyboardInterrupt:
+            logger.info(f'Exiting.')
+
+    def _main_loop(self):
         speed_by_card = {}
+        logger.info(f'Entering main loop.')
         while True:
             for name, card in self._scanner.cards.items():
                 current_speed = speed_by_card.get(name)
