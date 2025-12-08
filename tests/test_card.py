@@ -32,7 +32,7 @@ class MockCard(Card):
 class TestCard(unittest.TestCase):
     def setUp(self) -> None:
         self.card = MockCard('card1')
-        self.card._verify_card()
+        self.card.verify_card()
 
     def test_mocked_temp_input(self):
         for val in range(1, 100):
