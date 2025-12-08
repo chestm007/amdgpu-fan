@@ -10,17 +10,6 @@ class Curve:
         self.temps = self.points[:, 0]
         self.speeds = self.points[:, 1]
 
-        if np.min(self.speeds) < 0:
-            raise ValueError(f'Fan curve contains negative speeds, speed should be in [0,100]')
-        if np.max(self.speeds) > 100:
-            raise ValueError(f'Fan curve contains speeds greater than 100, speed should be in [0,100]')
-        if np.any(np.diff(self.temps) <= 0):
-            raise ValueError(f'Fan curve points should be strictly monotonically increasing, configuration error ?')
-        if np.any(np.diff(self.speeds) < 0):
-            raise ValueError(f'Curve fan speeds should be monotonically increasing, configuration error ?')
-        if np.min(self.speeds) <= 3:
-            raise ValueError(f'Current driver bugs require the lowest speed value be set to 4')
-
     def get_speed(self, temp):
         """
         returns a speed for a given temperature

@@ -27,7 +27,8 @@ class Card:
                                 f' onboard')
                 else:
                     logger.info(f'skipping card: {self._identifier} as its missing endpoint {endpoint}')
-                raise FileNotFoundError
+                return False
+        return True
 
     def _load_endpoints(self):
         _endpoints = {}
@@ -46,7 +47,7 @@ class Card:
             with open(self._endpoints[endpoint], 'w') as e:
                 return e.write(str(data))
         except PermissionError:
-            logger.error('Failed writing to devfs file, are you sure your running as root?')
+            logger.error(f'Failed writing to sysfs file "{self._endpoints[endpoint]}", are you sure your running as root?')
             sys.exit(1)
 
     @property
@@ -96,16 +97,14 @@ class Scanner:
         cards = {}
         for node in os.listdir(ROOT_DIR):
             if re.match(self.CARD_REGEX, node):
+                logger.info(f'Found possible GPU at {ROOT_DIR}/{node}.')
                 if cards_to_scan and node.lower() not in [c.lower() for c in cards_to_scan]:
                     continue
-                try:
-                    _card = Card(node)
-                    if _card.verify_card():
-                        cards[node] = _card
-                except FileNotFoundError:
-                    # if card lacks hwmon or the required devfs files, its likely not
-                    # amdgpu, and definitely not compatible with this software
+                _card = Card(node)
+                if not _card.verify_card():
+                    logger.info(f'GPU not suitable for this software. If you are sure its an AMD card, please create an issue.')
                     continue
+                cards[node] = _card
         return cards
 
 

@@ -15,6 +15,8 @@ CONFIG_LOCATIONS = [
 
 class FanController:
     def __init__(self, config):
+        _validate_config(config)
+
         self._scanner = Scanner(config.get('cards'))
         if len(self._scanner.cards) < 1:
             logger.error('no compatible cards found, exiting')
@@ -26,8 +28,15 @@ class FanController:
         self._interval = 1/self._frequency
 
     def main(self):
-        logger.info(f'starting amdgpu-fan')
+        logger.info(f'Starting amdgpu-fan.')
+        try:
+            self._main_loop()
+        except KeyboardInterrupt:
+            logger.info(f'Exiting.')
+
+    def _main_loop(self):
         speed_by_card = {}
+        logger.info(f'Entering main loop.')
         while True:
             for name, card in self._scanner.cards.items():
                 current_speed = speed_by_card.get(name)
@@ -54,7 +63,40 @@ class FanController:
 def load_config(path):
     logger.debug(f'loading config from {path}')
     with open(path) as f:
-        return yaml.safe_load(f, Loader=yaml.FullLoader)
+        return yaml.safe_load(f)
+
+
+def _validate_config(config: dict):
+    """
+    Validate config is valid.
+    We should attempt to correct where possible, as people running this as a daemon via systemd might not notice
+    issues right away, and a working fan controller not doing what you want is far better than a not working fan
+    controller that turned your fans off under load...
+    """
+    def _set_speed(index, val, warning: str = None):
+        config["speed_matrix"][index][1] = val
+        if warning:
+            logger.warning(warning)
+
+    def _set_temp(index, val, warning: str = None):
+        config["speed_matrix"][index][0] = val
+        if warning:
+            logger.warning(warning)
+
+    # Verify `speed_matrix` settings.
+    _last_speed, _last_temp = 0, 0
+    for i, (temp, speed) in enumerate(config.get('speed_matrix')):
+        if speed < 0:
+            _set_speed(i, (speed := 0), f'Fan curve contains negative speeds, speed should be in [0,100]')
+        if speed > 100:
+            _set_speed(i, (speed := 100), f'Fan curve contains speeds greater than 100, speed should be in [0,100]')
+        if speed < _last_speed:
+            _set_speed(i, (speed := _last_speed), f'Fan curve speed points should be strictly monotonically increasing, configuration error.')
+        if temp < _last_temp:
+            _set_temp(i, (temp := _last_temp), f'Fan curve temp points should be strictly monotonically increasing, configuration error.')
+        if speed < 4:
+            _set_speed(i, (speed := 4), f'Current driver bugs require the lowest speed value be set to 4')
+        _last_speed, _last_temp = speed, temp
 
 
 def main():
@@ -85,11 +127,16 @@ speed_matrix:
 
     if config is None:
         logger.info(f'no config found, creating one in {CONFIG_LOCATIONS[-1]}')
-        with open(CONFIG_LOCATIONS[-1], 'w') as f:
-            f.write(default_fan_config)
-            f.flush()
+        try:
+            with open(CONFIG_LOCATIONS[-1], 'w') as f:
+                f.write(default_fan_config)
+                f.flush()
 
-        config = load_config(CONFIG_LOCATIONS[-1])
+            config = load_config(CONFIG_LOCATIONS[-1])
+        except PermissionError:
+            logger.error(f'PermissionError while attempting to create config file in "{CONFIG_LOCATIONS[-1]}". '
+                         'amdgpu-fan will still run with the default config.')
+            config = yaml.safe_load(default_fan_config)
 
     FanController(config).main()
 
