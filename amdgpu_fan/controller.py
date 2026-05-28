@@ -32,6 +32,9 @@ class FanController:
         try:
             self._main_loop()
         except KeyboardInterrupt:
+            for name, card in self._scanner.cards.items():
+                logger.debug(f"Setting {name} fan back to kernel controlled.")
+                card.set_system_controlled_fan(True)
             logger.info(f'Exiting.')
 
     def _main_loop(self):
